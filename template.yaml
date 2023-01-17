@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  python3.9
+
+  Sample SAM Template for owm-hour-to-day
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3600
+    MemorySize: 128
+
+Resources:
+  OWMHoursToDayFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      PackageType: Image
+      MemorySize: 128
+      Timeout: 900
+      Architectures:
+        - x86_64
+      Events:
+        CheckWebsiteScheduledEvent1:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 hour)
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./owm
+      DockerTag: python3.8-v1
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  OWMHoursToDayFunction:
+    Description: "OWM Hour to Day Lambda Function ARN"
+    Value: !GetAtt OWMHoursToDayFunction.Arn
+  OWMHoursToDayFunctionIamRole:
+    Description: "Implicit IAM Role created for OWM Hour to Day function"
+    Value: !GetAtt OWMHoursToDayFunctionRole.Arn
